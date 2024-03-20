@@ -1,8 +1,14 @@
 
+
   onEvent("startScreen", "click", function(){
     setScreen("playScreen");
   });
     
+  
+
+
+
+
 
   var songs = getColumn("songsArtistsGenre", "Track Name");
   var artists = getColumn("songsArtistsGenre", "Artist");
@@ -15,12 +21,14 @@
 	var index = 0;
 	var songRefPopular = [];
 	var artistRefPopular = [];
+	
+	
   
 
   
   
 	  
-// the list isn't resetting
+
 	function popularityFilter(){
 	  
 	 // for(var removeSongs = songRefPopular.length - 1; removeSongs >= 0; removeSongs --){
@@ -41,6 +49,7 @@
 	      
 	      
 	  }
+	  
 	   // console.log("run, artists and songs ref is filled"); //confirmed works to here, only adds songs that should be removed
 	    console.log(songsFiltered.length);
 	    for( var l = songsFiltered.length - 1; l >= 0; l--){
@@ -62,6 +71,8 @@
 	}
 	
 	
+	
+	
 	function genreFilter(){
 	  var genreText = getText("genreInput");
 	  for (var i = 0; i < songs.length; i++){
@@ -70,6 +81,8 @@
 	    }
 	  }
 	}
+	
+	
 	
 
 
@@ -106,6 +119,9 @@
 	});
 	
 	
+	
+	
+	
 	function enableButtons(){
 	  setProperty("leftButton", "hidden", false);
 	  setProperty("rightButton", "hidden", false);
@@ -126,6 +142,7 @@
 	});
 	
 	
+	
 	onEvent("rightButton", "click", function(){
 	  if (index < songsFiltered.length - 1){
 	    index++;
@@ -136,6 +153,9 @@
 	  }, 50);
 	  displaySong();
 	});
+	
+	
+	
 	
 	
 	
@@ -150,6 +170,7 @@
 	
 	
 	
+	
 //linking outside external stuff
 	
 	onEvent("generateLink", "click", function(){
@@ -159,6 +180,27 @@
 	  
 	});
 	
+	
+	onEvent("inputScreenButton", "click", function(){
+	  setScreen("inputScreen");
+	});
+	
+	onEvent("backButton", "click", function(){
+	  setScreen("playScreen");
+	});
+	
+	onEvent("playButtonInput", "click", function(){
+	  var inputArtist = getText("artistInput");
+	  var inputSong = getText("songInput");
+	  var urlSong = inputSong + "+" + inputArtist;
+	  
+	  var searchURL = "https://www.youtube.com/results?search_query=";
+	  var complete_link = searchURL+urlSong;
+	  
+	  console.log(", " + complete_link);
+	  open(complete_link);
+	  
+	});
 	
 	
 	
@@ -175,3 +217,4 @@
 	  console.log(thisSong + ", " + complete_link);
 	  open(complete_link);
 	}
+
