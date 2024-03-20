@@ -1,0 +1,177 @@
+
+  onEvent("startScreen", "click", function(){
+    setScreen("playScreen");
+  });
+    
+
+  var songs = getColumn("songsArtistsGenre", "Track Name");
+  var artists = getColumn("songsArtistsGenre", "Artist");
+  var popularity = getColumn("songsArtistsGenre", "Popularity");
+  var genre = getColumn("songsArtistsGenre", "Genre");
+  
+  var displaySongsIndex = [];
+  var songsFiltered = [];
+	var artistsFiltered = [];
+	var index = 0;
+	var songRefPopular = [];
+	var artistRefPopular = [];
+  
+
+  
+  
+	  
+// the list isn't resetting
+	function popularityFilter(){
+	  
+	 // for(var removeSongs = songRefPopular.length - 1; removeSongs >= 0; removeSongs --){
+	 //   removeItem(songRefPopular, removeSongs);
+	 // }
+	  songRefPopular = [];
+	  artistRefPopular = [];
+	  
+	  var minPop = getNumber("popularity");
+	  
+	  for(var i = 0; i < songs.length; i++){
+	      
+	      if(popularity[i] < minPop){
+	        
+	        appendItem(songRefPopular, songs[i]);
+	        appendItem(artistRefPopular, artists[i]);
+	      }
+	      
+	      
+	  }
+	   // console.log("run, artists and songs ref is filled"); //confirmed works to here, only adds songs that should be removed
+	    console.log(songsFiltered.length);
+	    for( var l = songsFiltered.length - 1; l >= 0; l--){
+	       //console.log("made it inside"); //not running to here
+	       
+	        for(var k = 0; k < songRefPopular.length; k++){
+	    
+	          if(songRefPopular[k] == songsFiltered[l]){ //never evaluates to true
+	           // console.log("is this evver true?");
+	            removeItem(songsFiltered, l);
+	            removeItem(artistsFiltered, l);
+	            console.log(songsFiltered);
+	          }
+	          
+	        }
+	     }
+	    
+	  
+	}
+	
+	
+	function genreFilter(){
+	  var genreText = getText("genreInput");
+	  for (var i = 0; i < songs.length; i++){
+	    if(genreText == genre[i]){
+	      appendItem(displaySongsIndex, (i)); 
+	    }
+	  }
+	}
+	
+
+
+	onEvent("generateSongs","click", function(){
+	  //re-initializing so old songs dont get mixed in
+	  displaySongsIndex = [];
+	  songsFiltered = [];
+	  artistsFiltered = [];
+	  index = 0;
+	  
+	  
+	  genreFilter();
+	  
+	  for(var i = 0; i < displaySongsIndex.length; i++){
+	   // var displayedIndex = displaySongsIndex[i];
+	 
+	    appendItem(songsFiltered, songs[displaySongsIndex[i]]); 
+	    appendItem(artistsFiltered, artists[displaySongsIndex[i]]);
+	   
+	  }
+	  
+	  if(songsFiltered.length == 0){
+	    songsFiltered = songs;
+	  }
+	  if(artistsFiltered.length == 0){
+	    artistsFiltered = artists;
+	  }
+	  
+	  popularityFilter();
+	  enableButtons();
+	  
+	  displaySong();
+	  
+	});
+	
+	
+	function enableButtons(){
+	  setProperty("leftButton", "hidden", false);
+	  setProperty("rightButton", "hidden", false);
+	}
+	
+	onEvent("leftButton", "click", function(){
+	  if (index > 0){
+	    index--;
+	  }
+	  
+	  displaySong();
+	  setProperty("leftButtonDark", "hidden", false);
+	  setTimeout(function(){
+	    setProperty("leftButtonDark", "hidden", true);
+	  }, 50);
+	  
+	  
+	});
+	
+	
+	onEvent("rightButton", "click", function(){
+	  if (index < songsFiltered.length - 1){
+	    index++;
+	  }
+	  setProperty("rightButtonDark", "hidden", false);
+	  setTimeout(function(){
+	    setProperty("rightButtonDark", "hidden", true);
+	  }, 50);
+	  displaySong();
+	});
+	
+	
+	
+	function displaySong(){
+	  if(songsFiltered.length > 0){
+	  setText("display", songsFiltered[index]+" by "+ artistsFiltered[index]);
+	  } else {
+	    setText("display", "No songs to display.");
+	  }
+	}
+	
+	
+	
+	
+//linking outside external stuff
+	
+	onEvent("generateLink", "click", function(){
+	 
+	  
+	  linkGenerator();
+	  
+	});
+	
+	
+	
+	
+	function linkGenerator(){
+	  
+	  
+	 // console.log(songsFiltered);
+	  var thisSong = songsFiltered[index]+" by "+ artistsFiltered[index];
+	  var urlSong = songsFiltered[index] + "+" + artistsFiltered[index];
+	  
+  	var searchURL = "https://www.youtube.com/results?search_query=";
+	  var complete_link = searchURL+urlSong;
+	  
+	  console.log(thisSong + ", " + complete_link);
+	  open(complete_link);
+	}
